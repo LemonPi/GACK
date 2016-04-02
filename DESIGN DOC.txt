@@ -1,0 +1,11 @@
+## class Cell
+represent a spacial region with all the plant properties that are allowed there
+const properties:
+	area - double represent roughly how large the area is
+	neighbours - list of Cell objects that are adjacent
+	view_dist - int number of edges between it and a Cell next to a walkway (0 if is next to a walkway)
+	shading - double average amount of shade this area receives
+
+properties: (to be pruned via CSP)
+	height - list of int for how high a plant could be
+	colour - list of 
