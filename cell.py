@@ -2,7 +2,9 @@
 class Cell:
 	"""represent a spacial region with all the plant properties that are allowed there"""
 
-	def __init__(self, index, area, nat_shading, view_dist, adj=[]):
+	def __init__(self, index, area, nat_shading, view_dist, adj=None):
+		if adj == None:
+			adj = []
 		# immutable properties of the space (so they are values rather than Varible objects)
 		self.index = index
 		self.area = area
@@ -24,3 +26,37 @@ class Cell:
 		"""shoulder only be done during initialization; neighbour is another cell object"""
 		self.adj.append(neighbour)
 
+	def __repr__(self):
+		return "Cell(index={},area={},nat_shading={},view_dist={}, adj_count={})".format(
+			self.index, self.area, self.nat_shading, self.view_dist, len(self.adj))
+
+def addneighbour2way(a, b):
+	if b not in a.adj:
+		a.add_neighbour(b)
+	if a not in b.adj:
+		b.add_neighbour(a)
+
+def flood(startcell, dist):
+	newdist = dist + 1
+	for adjcell in startcell.adj:
+		if newdist < adjcell.view_dist:
+			adjcell.view_dist = newdist
+			flood(adjcell, newdist)
+
+def buildcells():
+	cells = [Cell(0, 0, 0, -1)]
+	with open("cell_areas.txt", "r") as infile:
+		indata = [int(b) for b in infile.read().strip().split(",")]
+		for cellarea in indata:
+			# we do not account for natural shading yet
+			cells.append(Cell(len(cells), cellarea, 0, 9999)) 
+	with open("adjacent.csv", "r") as infile:
+		for l in infile:
+			a = [int(b) for b in l.strip().split(",")]
+			cell = cells[a[0]]
+			for neighbor in a[1:]:
+				addneighbour2way(cell, cells[neighbor])
+	# flood fill for view dist
+	# yeah I know this is wrong
+	flood(cells[0], -1)
+	return cells
