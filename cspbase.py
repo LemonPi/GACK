@@ -76,7 +76,7 @@ class Variable:
     #
     #set up and info methods
     #
-    def __init__(self, name, domain=[]):
+    def __init__(self, name, domain=[], mc=0):
         '''Create a variable object, specifying its name (a
         string). Optionally specify the initial domain.
         '''
@@ -85,6 +85,11 @@ class Variable:
         self.curdom = [True] * len(domain)      #using list
         #for bt_search
         self.assignedValue = None
+        #for bb_search
+        self.max_cost = mc
+
+    def set_max_cost(self, max_cost):
+        self.max_cost = max_cost
 
     def add_domain_values(self, values):
         '''Add additional domain values to the domain
@@ -741,12 +746,25 @@ class BB:
         md = -1
         mv = None
         for v in self.unasgn_vars:
-            if md < 0:
-                md = v.cur_domain_size()
-                mv = v
-            elif v.cur_domain_size() < md:
-                md = v.cur_domain_size()
-                mv = v
+            # if it's a hard constraint
+            if self.csp.get_cons_with_var(v):
+                if md < 0:
+                    md = v.cur_domain_size()
+                    mv = v
+                elif v.cur_domain_size() < md:
+                    md = v.cur_domain_size()
+                    mv = v
+
+        # if no more hard constraints left unassigned, choose soft constraint variable ordered by cost
+        if md == -1:
+            for v in self.unasn_vars:
+                if md < 0:
+                    md = v.max_cost
+                    mv = v
+                elif v.max_cost < md:
+                    md = v.max_cost
+                    mv = v
+
         self.unasgn_vars.remove(mv)
         return mv
 
@@ -861,6 +879,9 @@ class BB:
                         print('BB prune branch with cost {} > UB {}'.format(self.get_total_cost(), self.UB))
                     var.unassign()
                     break   # before we do any pruning so no need to restore domains
+
+                if self.TRACE:
+                    print('cost {}'.format(self.get_total_cost()))
 
                 self.nDecisions = self.nDecisions+1
 
