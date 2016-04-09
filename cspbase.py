@@ -857,6 +857,8 @@ class BB:
                 # note that we can backtrack here because subsequent var = val choices
                 # can only make total cost greater, so give up now
                 if self.get_total_cost() >= self.UB:
+                    if self.TRACE:
+                        print('BB prune branch with cost {}'.format(self.get_total_cost()))
                     var.unassign()
                     break   # before we do any pruning so no need to restore domains
 
