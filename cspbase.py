@@ -835,6 +835,7 @@ class BB:
             if (self.get_total_cost() < self.UB):
                 self.UB = self.get_total_cost()
                 self.best_sol = copy.deepcopy(self.csp)
+                print('solution found with cost {}'.format(self.UB))
 
             # still need to backtrack to find better solutions
             # so don't return True
