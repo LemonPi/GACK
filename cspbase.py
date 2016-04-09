@@ -563,7 +563,7 @@ class SoftConstraint:
 
     def get_cost(self, *args):
         '''only if all of its scope variables are assigned'''
-        if self.get_n_unasgn != 0:
+        if self.get_n_unasgn() != 0:
             print("getting cost of ", c, " when not all scope variables are assigned")
         vals = [v.get_assigned_value() for v in self.scope]
         return self.cost(*vals)
