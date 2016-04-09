@@ -88,13 +88,17 @@ def buildcells():
 	return cells
 
 def writealladjclause(cells, flowertypes, outfile):
+	print("Gack", file=outfile)
 	for cell in cells:
 		if cell.index == 0:
 			continue
 		for var in cell.variables:
-			print("(int cell{}_{} ({}))".format(cell.index, 
+			print("cell{}_{} {}".format(cell.index, 
 				var.name, " ".join(str(a) for a in var.domain)),
 			file=outfile)
+	for cell in cells:
+		if cell.index == 0:
+			continue
 		doprintflowers(cell.index, flowertypes, outfile)
 		for adj in cell.adj:
 			if adj.index > cell.index:
@@ -104,12 +108,13 @@ def writealladjclause(cells, flowertypes, outfile):
 			# soil must be similar
 			# 0, 1, 2
 			# so maximum difference must be < 2
-			print("(< (abs (- cell{}_moist cell{}_moist)) 2)".
+			print("hard(abs(cell{}_moist - cell{}_moist) < 2)".
 				format(cell.index, adj.index), file=outfile)
 			if adj.view_dist != cell.view_dist:
-				print("({} cell{}_height cell{}_height)".format("<=" if cell.view_dist < adj.view_dist else ">=",
-	cell.index, adj.index), file=outfile)
-			print("(or (ne cell{}_color_spring cell{}_color_spring) (ne cell{}_color_summer cell{}_color_summer) (ne cell{}_color_fall cell{}_color_fall))".format(cell.index, adj.index,
+				print("hard(cell{}_height {} cell{}_height)".format(cell.index,
+	"<=" if cell.view_dist < adj.view_dist else ">=",
+	adj.index), file=outfile)
+			print("soft(1, (cell{}_color_spring != cell{}_color_spring)|| (cell{}_color_summer != cell{}_color_summer) || (cell{}_color_fall != cell{}_color_fall))".format(cell.index, adj.index,
 				cell.index, adj.index,
 				cell.index, adj.index), file=outfile)
 	# no color should take up more than 3/4 of the garden
@@ -141,21 +146,43 @@ def readflowertypes():
 			flowers.append(outflower)
 	return flowers
 def doprintflowers(cellindex, flowertypes, outfile):
-	print("(or", file=outfile)
+	print("hard(", end="", file=outfile)
+	firstflower = True
 	for flower in flowertypes:
-		print("(and", file=outfile)
+		if firstflower:
+			firstflower = False
+		else:
+			print("||", end="", file=outfile)
+		print("(", end="", file=outfile)
+		firstvname = True
 		for vname in flower:
-			print("(= cell{}_{} {})".format(
+			if firstvname:
+				firstvname = False
+			else:
+				print("&&", end="", file=outfile)
+			print("(cell{}_{} == {})".format(
 				cellindex, vname, flower[vname]),
-				file=outfile)
-		print(")", file=outfile)
+				end="", file=outfile)
+		print(")", end="", file=outfile)
 	print(")", file=outfile)
+def writeremovedvars(cells, outfile):
+	for cell in cells:
+		if cell.index == 0:
+			continue
+		for var in cell.variables:
+			if len(var.domain) != 1:
+				continue
+			print("cell{}_{} {}".format(cell.index, 
+				var.name, " ".join(str(a) for a in var.domain)),
+			file=outfile)
 def main():
 	cells = buildcells()
 	flowertypes = readflowertypes()
 	cells[3].get_var("color_summer").domain = [0] # red in summer
 	with open("theoutfile.txt", "w") as outfile:
 		writealladjclause(cells, flowertypes, outfile)
+	with open("removedvars.txt", "w") as outfile:
+		writeremovedvars(cells, outfile)
 
 if __name__ == "__main__":
 	main()
