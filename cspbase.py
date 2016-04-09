@@ -884,7 +884,7 @@ class BB:
         '''find and return the best order to explore the values of a variable.
         order by cheapest cost first'''
         vals = var.cur_domain()
-        scons = get_scons_with_var(var)
+        scons = self.get_scons_with_var(var)
         # see how assignment to each value would change cost
         cost_change = dict()
         for val in vals:
