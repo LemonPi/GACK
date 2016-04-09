@@ -1,0 +1,42 @@
+import sys
+print("from cspbase import *")
+print("from propagators import *")
+print("""def sat_abseq(d, eqv):
+	vara = d[0]
+	varb = d[1]
+	output = []
+	for i in vara.dom:
+		for j in varb.dom:
+			if abs(i - j) == eqv:
+				output.append((i, j))
+	return output""")
+with open(sys.argv[1], "r") as infile:
+	state = 0
+	for l in infile:
+		l = l.strip()
+		if len(l) == 0 or "#" == l[0]:
+			continue
+		if state == 0:
+			header = l.split(" ")
+			print("csp = SCSP('", header[0], "')")
+			state = 1
+		elif state == 1:
+			if l.startswith("hard("):
+				# note: var detect is broken
+				middle = l[l.find("abs(") + 4:l.find(") ==")]
+				middlevars = [a.strip() for a in middle.split(" - ")]
+				print("c = Constraint('', [",
+					",".join(middlevars), "])")
+				print("c.add_satisfying_tuples(sat_abseq(c.scope,", l[l.find(") == ") + len(") == "):l.rfind(")")], "))")
+				print("csp.add_constraint(c)")
+			elif l.startswith("soft("):
+				middle = l[l.find("abs(") + 4:l.find(") >")]
+				middlevars = [a.strip() for a in middle.split(" - ")]
+				print("csp.add_soft_constraint(SoftConstraint('', [", ",".join(middlevars), "], lambda a, b: 0 if abs(a - b) > ",
+					l[l.find(") > ") + len(") > "):l.rfind(")")], " else ", l[len("soft("):l.find(",")], "))")
+			else:
+				me = [a.strip() for a in l.split()]
+				print(me[0], "= Variable('" + me[0] + "', [", ",".join(me[1:]), "])")
+				print("csp.add_var(", me[0], ")")
+print("bb = BB(csp, UB=", header[1], ")")
+print("bb.bb_search(prop_GAC)")
