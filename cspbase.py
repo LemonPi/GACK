@@ -1,6 +1,5 @@
 import time
 import functools
-import math
 
 '''Constraint Satisfaction Routines
    A) class Variable
@@ -644,7 +643,7 @@ class SCSP:
         else:
             for v in c.scope:
                 if not v in self.vars_to_scons:
-                    print("Tryign to add soft constraint ", c, " with unknown variables to SCSP object")
+                    print("Trying to add soft constraint ", c, " with unknown variables to SCSP object")
                     return
                 self.vars_to_scons[v].append(c)
             self.scons.append(c)
@@ -685,7 +684,7 @@ class SCSP:
 
 # branch and bound extension of backtrack search to allow for soft constraints
 class BB:
-    def __init__(self, csp, UB=math.inf, LB=0):
+    def __init__(self, csp, UB=float('inf'), LB=0):
         '''csp == CSP object specifying the CSP to be solved'''
 
         self.csp = csp
