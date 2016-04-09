@@ -18,25 +18,20 @@ def writealladjclause(cells, flowertypes, outfile):
 			if adj.index == 0:
 				continue
 			# soil must be similar
-			# 0, 1, 2
+			# 0 dry, 1 average, 2 moist, 3 wet
 			# so maximum difference must be < 2
 			print("hard(abs(cell{}_moist - cell{}_moist) < 2)".
 				format(cell.index, adj.index), file=outfile)
+			# no blocking:
+			# adjacent with smaller view_dist should have smaller or equal height
 			if adj.view_dist != cell.view_dist:
 				print("hard(cell{}_height {} cell{}_height)".format(cell.index,
 	"<=" if cell.view_dist < adj.view_dist else ">=",
 	adj.index), file=outfile)
+			# adjacent should have different colour in either spring, summer, or fall
 			print("soft(1, (cell{}_color_spring != cell{}_color_spring)|| (cell{}_color_summer != cell{}_color_summer) || (cell{}_color_fall != cell{}_color_fall))".format(cell.index, adj.index,
 				cell.index, adj.index,
 				cell.index, adj.index), file=outfile)
-	# no color should take up more than 3/4 of the garden
-	if False:#for color in colorsDom:
-		for season in ["spring", "summer", "fall"]:
-			print("(count {} ({}) lt {})".format(
-				color,
-				" ".join("cell{}_color_{}".format(cell.index, season)
-					for cell in cells if cell.index != 0),
-				int((len(cells) - 1)*2/3)), file=outfile)
 
 def readflowertypes():
 	flowers = []
@@ -58,6 +53,7 @@ def readflowertypes():
 			flowers.append(outflower)
 	return flowers
 def doprintflowers(cellindex, flowertypes, outfile):
+	# cell must have properties corresponding to a valid flower type
 	print("hard(", end="", file=outfile)
 	firstflower = True
 	for flower in flowertypes:
@@ -88,11 +84,16 @@ def writeremovedvars(cells, outfile):
 				var.name, " ".join(str(a) for a in var.dom)),
 			file=outfile)
 def main():
+	# build the graph of cells
 	cells = buildcells()
+	# read the valid flower types from the csv
 	flowertypes = readflowertypes()
+	# set user preferences
 	cells[3].get_var("color_summer").dom = [0] # red in summer
+	# write ToulBar cp output
 	with open("theoutfile.txt", "w") as outfile:
 		writealladjclause(cells, flowertypes, outfile)
+	# Write list of all variables with domain size=1 (which ToulBar omits) for result display
 	with open("removedvars.txt", "w") as outfile:
 		writeremovedvars(cells, outfile)
 
