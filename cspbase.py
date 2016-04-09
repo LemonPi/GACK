@@ -1,5 +1,6 @@
 import time
 import functools
+import copy
 
 '''Constraint Satisfaction Routines
    A) class Variable
@@ -830,8 +831,8 @@ class BB:
         if not self.unasgn_vars:
             #all variables assigned
             # better solution (or first solution) found
-            if (self.total_cost() < self.UB):
-                self.UB = self.total_cost()
+            if (self.get_total_cost() < self.UB):
+                self.UB = self.get_total_cost()
                 self.best_sol = copy.deepcopy(self.csp)
 
             # still need to backtrack to find better solutions
@@ -895,10 +896,10 @@ class BB:
                     cost += c.get_cost()
 
             cost_change[val] = cost
+            var.unassign()
 
-        var.unassign()
         # sort by lowest cost change first
-        sort(vals, key=lambda v: cost_change[v])
+        vals.sort(key=lambda v: cost_change[v])
         return vals
 
     def get_total_cost(self):
