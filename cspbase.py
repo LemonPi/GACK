@@ -76,7 +76,7 @@ class Variable:
     #
     #set up and info methods
     #
-    def __init__(self, name, domain=[], mc=0):
+    def __init__(self, name, domain=[]):
         '''Create a variable object, specifying its name (a
         string). Optionally specify the initial domain.
         '''
@@ -85,11 +85,6 @@ class Variable:
         self.curdom = [True] * len(domain)      #using list
         #for bt_search
         self.assignedValue = None
-        #for bb_search
-        self.max_cost = mc
-
-    def set_max_cost(self, max_cost):
-        self.max_cost = max_cost
 
     def add_domain_values(self, values):
         '''Add additional domain values to the domain
@@ -556,7 +551,7 @@ class BT:
 
 ######################### SOFT CSP classes and routines
 class SoftConstraint: 
-    def __init__(self, name, scope, cost): 
+    def __init__(self, name, scope, cost, mc): 
         '''Maps possible value combinations of the constrained variables to a cost
         cost = 0 if fully satisfied, else a positive number 
         requires a cost(scope) function
@@ -565,6 +560,7 @@ class SoftConstraint:
         self.scope = list(scope)
         self.cost = cost
         self.name = name
+        self.max_cost = mc
 
     def get_cost(self, *args):
         '''only if all of its scope variables are assigned'''
@@ -758,11 +754,15 @@ class BB:
         # if no more hard constraints left unassigned, choose soft constraint variable ordered by cost
         if md == -1:
             for v in self.unasn_vars:
+                # choose the one with highest max cost that still remains to be assigned to involving this variable
+                scons = self.csp.get_scons_with_var(v)
+                # can assume constraint is not fully assigned
+                max_cost = max((c.max_cost for c in scons)) if scons else 0
                 if md < 0:
-                    md = v.max_cost
+                    md = max_cost
                     mv = v
                 elif v.max_cost < md:
-                    md = v.max_cost
+                    md = max_cost
                     mv = v
 
         self.unasgn_vars.remove(mv)
