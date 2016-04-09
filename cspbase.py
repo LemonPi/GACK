@@ -753,7 +753,7 @@ class BB:
 
         # if no more hard constraints left unassigned, choose soft constraint variable ordered by cost
         if md == -1:
-            for v in self.unasn_vars:
+            for v in self.unasgn_vars:
                 # choose the one with highest max cost that still remains to be assigned to involving this variable
                 scons = self.csp.get_scons_with_var(v)
                 # can assume constraint is not fully assigned
@@ -761,7 +761,7 @@ class BB:
                 if md < 0:
                     md = max_cost
                     mv = v
-                elif v.max_cost < md:
+                elif max_cost < md:
                     md = max_cost
                     mv = v
 

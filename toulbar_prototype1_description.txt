@@ -1,0 +1,12 @@
+In prototype 1, four groups of constraints are enforced:
+
+- Hard constraint: For each cell, the combination of spring color, summer color, fall color, height, and moisture must be satisfiable by a plant.
+- Hard constraint: For each cell, its moisture must be within 1 of all their neighbour's moisture.
+- Hard constraint: A cell closer to the edge of the bed must have a lower or equal height compared to its neighbours with higher height.
+- Soft constraint: For each cell, it must have a different colour than its neighbours in either spring, summer, or fall.
+
+Cell 3 is hardcoded to have red in the summer to simulate a user's input/preferences.
+
+Values are chosen in the order specified when defining a variable's domain - so reds and oranges are populated more often as they are at the front of the list of colours. Reversing this list gives more violets and blues instead.
+
+The CSP is solved through ToulBar2 and the solution is displayed using draw_results.html.
