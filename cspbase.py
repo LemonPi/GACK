@@ -858,7 +858,7 @@ class BB:
                 # can only make total cost greater, so give up now
                 if self.get_total_cost() >= self.UB:
                     if self.TRACE:
-                        print('BB prune branch with cost {}'.format(self.get_total_cost()))
+                        print('BB prune branch with cost {} > UB {}'.format(self.get_total_cost(), self.UB))
                     var.unassign()
                     break   # before we do any pruning so no need to restore domains
 
