@@ -3,6 +3,16 @@ class Variable:
 		self.name = name
 		self.domain = domain
 
+colorRed = 0
+colorOrange = 1
+colorYellow = 2
+colorGreen = 3
+colorBlue = 4
+colorViolet = 5
+
+colorsDom = [0, 1, 2, 3, 4, 5] # roygbv
+heightDom = [0, 1, 2, 3, 4]
+
 class Cell:
 	"""represent a spacial region with all the plant properties that are allowed there"""
 
@@ -24,10 +34,11 @@ class Cell:
 
 		# mutable Variables of the space that should have their domains pruned
 		self.variables = []
-		self.add_var(Variable("ph", [0, 1, 2]))
 		self.add_var(Variable("moist", [0, 1, 2, 3]))
-
-
+		self.add_var(Variable("color_spring", list(colorsDom)))
+		self.add_var(Variable("color_summer", list(colorsDom)))
+		self.add_var(Variable("color_fall", list(colorsDom)))
+		self.add_var(Variable("height", list(heightDom)))
 
 	def add_neighbour(self, neighbour):
 		"""shoulder only be done during initialization; neighbour is another cell object"""
@@ -76,7 +87,7 @@ def buildcells():
 	flood(cells[0], -1)
 	return cells
 
-def writealladjclause(cells, outfile):
+def writealladjclause(cells, flowertypes, outfile):
 	for cell in cells:
 		if cell.index == 0:
 			continue
@@ -84,6 +95,7 @@ def writealladjclause(cells, outfile):
 			print("(int cell{}_{} ({}))".format(cell.index, 
 				var.name, " ".join(str(a) for a in var.domain)),
 			file=outfile)
+		doprintflowers(cell.index, flowertypes, outfile)
 		for adj in cell.adj:
 			if adj.index > cell.index:
 				continue
@@ -92,17 +104,58 @@ def writealladjclause(cells, outfile):
 			# soil must be similar
 			# 0, 1, 2
 			# so maximum difference must be < 2
-			print("(< (abs (- cell{}_ph cell{}_ph)) 2)".
-				format(cell.index, adj.index), file=outfile)
 			print("(< (abs (- cell{}_moist cell{}_moist)) 2)".
 				format(cell.index, adj.index), file=outfile)
+			if adj.view_dist != cell.view_dist:
+				print("({} cell{}_height cell{}_height)".format("<=" if cell.view_dist < adj.view_dist else ">=",
+	cell.index, adj.index), file=outfile)
+			print("(or (ne cell{}_color_spring cell{}_color_spring) (ne cell{}_color_summer cell{}_color_summer) (ne cell{}_color_fall cell{}_color_fall))".format(cell.index, adj.index,
+				cell.index, adj.index,
+				cell.index, adj.index), file=outfile)
+	# no color should take up more than 3/4 of the garden
+	if False:#for color in colorsDom:
+		for season in ["spring", "summer", "fall"]:
+			print("(count {} ({}) lt {})".format(
+				color,
+				" ".join("cell{}_color_{}".format(cell.index, season)
+					for cell in cells if cell.index != 0),
+				int((len(cells) - 1)*2/3)), file=outfile)
 
+def readflowertypes():
+	flowers = []
+	with open("flowertypes.csv", "r") as infile:
+		a = True
+		for l in infile:
+			if a:
+				a = False
+				continue #skip first
+			b = [int(b) for b in l.strip().split(",")]
+			# height, color, season, moisture
+			outflower = {
+				"height": b[0],
+				"color_spring": b[1] if b[2] == 0 else colorGreen,
+				"color_summer": b[1] if b[2] == 1 else colorGreen,
+				"color_fall": b[1] if b[2] == 2 else colorGreen,
+				"moist": b[3]
+			}
+			flowers.append(outflower)
+	return flowers
+def doprintflowers(cellindex, flowertypes, outfile):
+	print("(or", file=outfile)
+	for flower in flowertypes:
+		print("(and", file=outfile)
+		for vname in flower:
+			print("(= cell{}_{} {})".format(
+				cellindex, vname, flower[vname]),
+				file=outfile)
+		print(")", file=outfile)
+	print(")", file=outfile)
 def main():
 	cells = buildcells()
-	cells[3].get_var("ph").domain = [0];
-	cells[3].get_var("moisture").domain = [0];
+	flowertypes = readflowertypes()
+	cells[3].get_var("color_summer").domain = [0] # red in summer
 	with open("theoutfile.txt", "w") as outfile:
-		writealladjclause(cells, outfile)
+		writealladjclause(cells, flowertypes, outfile)
 
 if __name__ == "__main__":
 	main()
