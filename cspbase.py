@@ -807,7 +807,7 @@ class BB:
             print("SCSP{} detected contradiction at root".format(
                 self.csp.name))
         else:
-            status = self.bb_recurse(propagator, 1)   #now do recursive search
+            self.bb_recurse(propagator, 1)   #now do recursive search
 
 
         self.restoreValues(prunings)
@@ -816,6 +816,7 @@ class BB:
         if status == True:
             print("SCSP {} solved. CPU Time used = {}".format(self.csp.name,
                                                              time.process_time() - stime))
+            print("solution has cost {}, compared to lower bound {}".format(self.UB, self.LB))
             self.best_sol.print_soln()
 
         print("bb_search finished")
