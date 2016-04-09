@@ -702,7 +702,7 @@ class BB:
 
     def trace_on(self):
         '''Turn search trace on'''
-        self.TRACE = True
+        self.TRACE = True 
 
     def trace_off(self):
         '''Turn search trace off'''
@@ -836,7 +836,8 @@ class BB:
                 self.UB = self.get_total_cost()
                 self.best_sol = copy.deepcopy(self.csp)
                 print('solution found with cost {}'.format(self.UB))
-
+            else:
+                print('reached solution with too expensive cost {}'.format(self.get_total_cost()))
             # still need to backtrack to find better solutions
             # so don't return True
 
