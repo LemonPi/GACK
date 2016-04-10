@@ -62,9 +62,10 @@ def readflowertypes():
 	return flowers
 def doprintflowers(cellindex, flowertypes, cellwidth, cell_view_dist, outfile):
 	# cell must have properties corresponding to a valid flower type
-	print("hard(", end="", file=outfile)
-	firstflower = True
 	theset = set()
+	allflower = []
+	satisfying = {}
+	varnames = [a for a in flowertypes[0] if a[0] != "-"]
 	for flower in flowertypes:
 		firstvname = True
 		myspread = flower["-spread"]
@@ -76,25 +77,29 @@ def doprintflowers(cellindex, flowertypes, cellwidth, cell_view_dist, outfile):
 		flowertuple = tuple(flower[a] for a in flower if a[0] != "-")
 		if flowertuple in theset:
 			continue
-		else:
-			theset.add(flowertuple)
-		if firstflower:
-			firstflower = False
-		else:
-			print("||", end="", file=outfile)
-		print("(", end="", file=outfile)
-		for vname in flower:
-			if vname[0] == "-":
-				continue
+		theset.add(flowertuple)
+		for i in range(len(flowertuple)):
+			for j in range(i + 1, len(flowertuple)):
+				myval = (i, j)
+				fv = (flowertuple[i], flowertuple[j])
+				if not myval in satisfying:
+					satisfying[myval] = set([fv])
+				else:
+					satisfying[myval].add(fv)
+	firstsatisfy = True
+	for fv in satisfying:
+		print("hard(", end="", file=outfile)
+		firstvname = True
+		for ft in satisfying[fv]:
 			if firstvname:
 				firstvname = False
 			else:
-				print("&&", end="", file=outfile)
-			print("(cell{}_{} == {})".format(
-				cellindex, vname, flower[vname]),
+				print("||", end="", file=outfile)
+			print("(cell{}_{} == {} && cell{}_{} == {})".format(
+				cellindex, varnames[fv[0]], ft[0],
+				cellindex, varnames[fv[1]], ft[1]),
 				end="", file=outfile)
-		print(")", end="", file=outfile)
-	print(")", file=outfile)
+		print(")", file=outfile)
 def writeremovedvars(cells, outfile):
 	for cell in cells:
 		if cell.index == 0:
