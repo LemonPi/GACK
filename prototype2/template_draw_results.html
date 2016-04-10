@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script id="results" type="text/plain">
+#include "solutionout.txt"
+</script>
+<script>
+"use strict";
+var cellCount = 39;
+var drawId = 0;
+var ctx, canvas, bedpos, bedgraph, mainImg, pixels, pixelsData;
+var colors = [0xffebee, 0xffcdd2, 0xef9a9a, 0xe57373,
+0xef5350, 0xf44336, 0xe53935, 0xd32f2f,
+0xc62828, 0xb71c1c, 0xfce4ec, 0xf8bbd0,
+0xf48fb1, 0xf06292, 0xec407a, 0xe91e63,
+0xd81b60, 0xc2185b, 0xad1457, 0x880e4f,
+0xf3e5f5, 0xe1bee7, 0xce93d8, 0xba68c8,
+0xab47bc, 0x9c27b0, 0x8e24aa, 0x7b1fa2,
+0x6a1b9a, 0x4a148c, 0xede7f6, 0xd1c4e9,
+0xb39ddb, 0x9575cd, 0x7e57c2, 0x673ab7,
+0x5e35b1, 0x512da8, 0x4527a0];
+var plantColorMap = [0xf44336, 0xff9800, 0xffeb3b, 0x8bc34a, 0x2196f3, 0x9c27b0];
+var resultsSrc = "results";
+function drawResult(colorForCell) {
+	var d = pixelsData;
+	var e = pixels.data;
+	for (var i = 0; i < d.length; i += 4) {
+		var myint = d[i] << 16 | d[i+1] << 8 | d[i+2];
+		var pixindex = colors.indexOf(myint);
+		if (pixindex != -1) {
+			var c = colorForCell[pixindex];
+			e[i] = (c >> 16) & 0xff;
+			e[i+1] = (c >> 8) & 0xff;
+			e[i+2] = c & 0xff;
+		}
+	}
+	ctx.putImageData(pixels, 0, 0);
+}
+function loadhandler() {
+	var counta = new Array(colors.length);
+	for (var i = 0; i < colors.length; i++) counta[i] = 0;
+	canvas = document.getElementById("maincanvas");
+	mainImg = document.getElementById("mainimg");
+	canvas.width = mainImg.width;
+	canvas.height = mainImg.height;
+	ctx = canvas.getContext("2d");
+	ctx.drawImage(mainImg, 0, 0);
+	pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+	var d = pixels.data;
+	pixelsData = new Uint8ClampedArray(d);
+	drawForSeason("spring");
+}
+
+function cellColorsForSeason(vars, season) {
+	var outColors = new Array(cellCount);
+	for (var i = 0; i < cellCount; i++) {
+		var thecolor = vars["cell" + (i + 1) + "_color_" + season];
+		outColors[i] = plantColorMap[thecolor];
+	}
+	return outColors;
+}
+
+function getCellVars() {
+	var d = document.getElementById(resultsSrc);
+	var e = d.innerHTML.trim().split("\n");
+	var vars = {};
+	for (var i = 0; i < e.length; i++) {
+		var f = e[i].split(" ");
+		vars[f[0]] = f[1];
+	}
+	return vars;
+}
+
+function drawForSeason(season) {
+	var vars = getCellVars();
+	var colors = cellColorsForSeason(vars, season);
+	drawResult(colors);
+}
+window.onload = loadhandler;
+</script>
+</head>
+<body>
+<canvas id="maincanvas" width="1024" height="1024"></canvas>
+<img id="mainimg" src="../flowerbed_coloured.png" style="display: none">
+<button onclick="drawForSeason('spring')">Spring</button>
+<button onclick="drawForSeason('summer')">Summer</button>
+<button onclick="drawForSeason('fall')">Fall</button>
+</body>
+</html>

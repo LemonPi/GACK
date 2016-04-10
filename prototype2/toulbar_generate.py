@@ -132,7 +132,6 @@ def applyprefs(cells, userprefs):
 					print("color_rank is missing", i)
 					break
 			else:
-				print("setting all domains")
 				for cell in cells:
 					for colordom in ["color_spring", "color_summer", "color_fall"]:
 						cell.get_var(colordom).dom = list(pval)
