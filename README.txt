@@ -37,13 +37,17 @@ To run ourcsp_warehouse.py:
 
 To run the equivalent test using Toulbar2:
 
-`toulbar2-0.9.8-x86_64/bin/toulbar2 toulbar2-0.9.8-x86_64/share/doc/validation/default/warehouse.wcsp`
+`time ./toulbar_translateandrun.sh toulbar2-0.9.8-x86_64/share/doc/validation/default/warehouse.cp`
 
 - ourcsp_warehouse_allsoft.py: warehouse with all hard constraints converted to soft constraints of 10000 weight each
 
 To run ourcsp_warehouse_allsoft.py:
 
 `python3 ourcsp_warehouse_allsoft.py`
+
+To run the equivalent test using Toulbar2:
+
+`time ./toulbar_translateandrun.sh warehouse_allsoft.cp`
 
 - ourcsp_celar.py: port of Toulbar2's validation/default/celar6sub0.cp
 
@@ -53,4 +57,4 @@ To run ourcsp_celar.py:
 
 To run the equivalent test using Toulbar2:
 
-`toulbar2-0.9.8-x86_64/bin/toulbar2 toulbar2-0.9.8-x86_64/share/doc/validation/default/celar6sub0.wcsp`
+`time ./toulbar_translateandrun.sh toulbar2-0.9.8-x86_64/share/doc/validation/default/celar6sub0.cp`
