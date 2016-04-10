@@ -35,9 +35,20 @@ def writealladjclause(cells, flowertypes, cellwidths, prefs, outfile):
 			#	cell.index, adj.index,
 			#	cell.index, adj.index), file=outfile)
 			#print("soft(1, (cell{}_color_spring != 3) != (cell{}_color_spring != 3))".format(cell.index, adj.index), file=outfile);
-			print("soft({}, (cell{}_color_spring != cell{}_color_spring))".format(prefs["season_weight_spring"], cell.index, adj.index), file=outfile)
-			print("soft({}, (cell{}_color_summer != cell{}_color_summer))".format(prefs["season_weight_summer"], cell.index, adj.index), file=outfile)
-			print("soft({}, (cell{}_color_fall != cell{}_color_fall))".format(prefs["season_weight_fall"], cell.index, adj.index), file=outfile)
+			print("soft({}, (cell{}_color_spring != cell{}_color_spring))".format(prefs["season_weight_spring"]*10, cell.index, adj.index), file=outfile)
+			print("soft({}, (cell{}_color_summer != cell{}_color_summer))".format(prefs["season_weight_summer"]*10, cell.index, adj.index), file=outfile)
+			print("soft({}, (cell{}_color_fall != cell{}_color_fall))".format(prefs["season_weight_fall"]*10, cell.index, adj.index), file=outfile)
+			for colorclash in prefs["user_colorclash_rules"]:
+				# 0: weight, 1: my colour, 2: your colour
+				print("soft({}, !((cell{}_color_spring == {} && cell{}_color_spring == {}) || (cell{}_color_spring == {} && cell{}_color_spring == {})))".format(prefs["season_weight_spring"] * colorclash[0],
+				cell.index, colorclash[1], adj.index, colorclash[2],
+				adj.index, colorclash[1], cell.index, colorclash[2]), file=outfile)
+				print("soft({}, !((cell{}_color_summer == {} && cell{}_color_summer == {}) || (cell{}_color_summer == {} && cell{}_color_summer == {})))".format(prefs["season_weight_summer"] * colorclash[0],
+				cell.index, colorclash[1], adj.index, colorclash[2],
+				adj.index, colorclash[1], cell.index, colorclash[2]), file=outfile)
+				print("soft({}, !((cell{}_color_fall == {} && cell{}_color_fall == {}) || (cell{}_color_fall == {} && cell{}_color_fall == {})))".format(prefs["season_weight_fall"] * colorclash[0],
+				cell.index, colorclash[1], adj.index, colorclash[2],
+				adj.index, colorclash[1], cell.index, colorclash[2]), file=outfile)
 
 def readflowertypes():
 	flowers = []
@@ -123,6 +134,7 @@ def readprefs():
 
 def applyprefs(cells, userprefs):
 	outprefs = {}
+	outprefs["user_colorclash_rules"] = []
 	for pref in userprefs:
 		if pref[0] == "color_rank":
 			pval = [int(i) for i in pref[1:]]
@@ -143,6 +155,14 @@ def applyprefs(cells, userprefs):
 				for i in range(3):
 					weight = 3 - i
 					outprefs["season_weight_" + seasons[i]] = weight
+		elif pref[0] == "colorclash":
+			weight = int(pref[1])
+			if weight < 1:
+				print("nonsense weight in colorclash", pref)
+				continue
+			colour1 = int(pref[2])
+			colour2 = int(pref[3])
+			outprefs["user_colorclash_rules"].append((weight, colour1, colour2))
 	# apply colour forcings - must be done last since these domain changes have priority
 	for pref in userprefs:
 		if pref[0].startswith("cell_force_"):

@@ -4,3 +4,5 @@ color_rank 5 4 3 2 1 0
 season_rank summer fall spring
 # force cell 3 to be red in summer
 cell_force_3_summer 0
+# no red and blue next to each other; weight is 5
+colorclash 5 0 4

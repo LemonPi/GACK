@@ -61,6 +61,18 @@ For example, to force cell 3 to be red in summer:
 
 cell_force_3_summer 0
 
+- colorclash (weight) (color1) (color2)
+
+Specifies that those two colours shouldn't be placed next to each other. Color1, color2 are in the same integer format as above.
+
+Lowest weight is 1; weight of 10 means this is just as important as colour variety.
+
+You can specify multiple colorclash preferences and they will all be taken into consideration according to their weights.
+
+For example, to prevent red and blue from being placed together:
+
+colorclash 5 0 4
+
 ### Other experiments
 
 We developed our own weighted CSP solver; this is located in cspbase.py. Unfortunately the performance was not sufficient for this assignment, so Toulbar2 was used instead. More information can be found in our report.
