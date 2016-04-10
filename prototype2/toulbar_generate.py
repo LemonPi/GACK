@@ -49,6 +49,17 @@ def writealladjclause(cells, flowertypes, cellwidths, prefs, outfile):
 				print("soft({}, !((cell{}_color_fall == {} && cell{}_color_fall == {}) || (cell{}_color_fall == {} && cell{}_color_fall == {})))".format(prefs["season_weight_fall"] * colorclash[0],
 				cell.index, colorclash[1], adj.index, colorclash[2],
 				adj.index, colorclash[1], cell.index, colorclash[2]), file=outfile)
+			for coloradj in prefs["user_coloradj_rules"]:
+				# 0: weight, 1: my colour, 2: your colour
+				print("soft({}, ((cell{}_color_spring == {} && cell{}_color_spring == {}) || (cell{}_color_spring == {} && cell{}_color_spring == {})))".format(prefs["season_weight_spring"] * coloradj[0],
+				cell.index, coloradj[1], adj.index, coloradj[2],
+				adj.index, coloradj[1], cell.index, coloradj[2]), file=outfile)
+				print("soft({}, ((cell{}_color_summer == {} && cell{}_color_summer == {}) || (cell{}_color_summer == {} && cell{}_color_summer == {})))".format(prefs["season_weight_summer"] * coloradj[0],
+				cell.index, coloradj[1], adj.index, coloradj[2],
+				adj.index, coloradj[1], cell.index, coloradj[2]), file=outfile)
+				print("soft({}, ((cell{}_color_fall == {} && cell{}_color_fall == {}) || (cell{}_color_fall == {} && cell{}_color_fall == {})))".format(prefs["season_weight_fall"] * coloradj[0],
+				cell.index, coloradj[1], adj.index, coloradj[2],
+				adj.index, coloradj[1], cell.index, coloradj[2]), file=outfile)
 
 def readflowertypes():
 	flowers = []
@@ -135,6 +146,7 @@ def readprefs():
 def applyprefs(cells, userprefs):
 	outprefs = {}
 	outprefs["user_colorclash_rules"] = []
+	outprefs["user_coloradj_rules"] = []
 	for pref in userprefs:
 		if pref[0] == "color_rank":
 			pval = [int(i) for i in pref[1:]]
@@ -163,6 +175,14 @@ def applyprefs(cells, userprefs):
 			colour1 = int(pref[2])
 			colour2 = int(pref[3])
 			outprefs["user_colorclash_rules"].append((weight, colour1, colour2))
+		elif pref[0] == "coloradj":
+			weight = int(pref[1])
+			if weight < 1:
+				print("nonsense weight in coloradj", pref)
+				continue
+			colour1 = int(pref[2])
+			colour2 = int(pref[3])
+			outprefs["user_coloradj_rules"].append((weight, colour1, colour2))
 	# apply colour forcings - must be done last since these domain changes have priority
 	for pref in userprefs:
 		if pref[0].startswith("cell_force_"):

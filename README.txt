@@ -73,6 +73,10 @@ For example, to prevent red and blue from being placed together:
 
 colorclash 5 0 4
 
+- coloradj (weight) (color1) (color2)
+
+Opposite of colorclash: this is for colours that should be adjacent. Usage is same as colorclash.
+
 ### Other experiments
 
 We developed our own weighted CSP solver; this is located in cspbase.py. Unfortunately the performance was not sufficient for this assignment, so Toulbar2 was used instead. More information can be found in our report.
