@@ -1,7 +1,7 @@
 import sys
 sys.path.append("../")
 from cell import *
-def writealladjclause(cells, flowertypes, cellwidths, outfile):
+def writealladjclause(cells, flowertypes, cellwidths, prefs, outfile):
 	print("Gack", file=outfile)
 	for cell in cells:
 		if cell.index == 0:
@@ -35,9 +35,9 @@ def writealladjclause(cells, flowertypes, cellwidths, outfile):
 			#	cell.index, adj.index,
 			#	cell.index, adj.index), file=outfile)
 			#print("soft(1, (cell{}_color_spring != 3) != (cell{}_color_spring != 3))".format(cell.index, adj.index), file=outfile);
-			print("soft(1, (cell{}_color_spring != cell{}_color_spring))".format(cell.index, adj.index), file=outfile)
-			print("soft(3, (cell{}_color_summer != cell{}_color_summer))".format(cell.index, adj.index), file=outfile)
-			print("soft(2, (cell{}_color_fall != cell{}_color_fall))".format(cell.index, adj.index), file=outfile)
+			print("soft({}, (cell{}_color_spring != cell{}_color_spring))".format(prefs["season_weight_spring"], cell.index, adj.index), file=outfile)
+			print("soft({}, (cell{}_color_summer != cell{}_color_summer))".format(prefs["season_weight_summer"], cell.index, adj.index), file=outfile)
+			print("soft({}, (cell{}_color_fall != cell{}_color_fall))".format(prefs["season_weight_fall"], cell.index, adj.index), file=outfile)
 
 def readflowertypes():
 	flowers = []
@@ -117,6 +117,40 @@ def readwidths():
 	with open("cellwidths.csv", "r") as infile:
 		return [int(int(i)*px2cm) for i in infile.read().strip().split(",")]
 
+def readprefs():
+	with open("user_prefs.txt", "r") as infile:
+		return [a.split() for a in infile.read().strip().split("\n") if not (len(a) == 0 or a[0] == "#")]
+
+def applyprefs(cells, userprefs):
+	outprefs = {}
+	for pref in userprefs:
+		if pref[0] == "color_rank":
+			pval = [int(i) for i in pref[1:]]
+			# check that all colours are represented
+			for i in range(len(colorsDom)):
+				if not i in pval:
+					print("color_rank is missing", i)
+					break
+			else:
+				print("setting all domains")
+				for cell in cells:
+					for colordom in ["color_spring", "color_summer", "color_fall"]:
+						cell.get_var(colordom).dom = list(pval)
+		elif pref[0] == "season_rank":
+			seasons = pref[1:]
+			if len(seasons) != 3:
+				print("seasons weight length is wrong")
+			else:
+				for i in range(3):
+					weight = 3 - i
+					outprefs["season_weight_" + seasons[i]] = weight
+	# apply colour forcings - must be done last since these domain changes have priority
+	for pref in userprefs:
+		if pref[0].startswith("cell_force_"):
+			punch = pref[0][len("cell_force_"):].split("_", 2)
+			cell = cells[int(punch[0])]
+			cell.get_var("color_" + punch[1]).dom = list([int(a) for a in pref[1:]])
+	return outprefs
 def main():
 	# build the graph of cells
 	cells = buildcells()
@@ -124,11 +158,12 @@ def main():
 	flowertypes = readflowertypes()
 	# read the cell widths (calculated using oriented minimum bounding box) from the csv
 	cellwidths = readwidths()
-	# set user preferences
-	cells[3].get_var("color_summer").dom = [0] # red in summer
+	# read and apply user preferences
+	userprefs = readprefs()
+	outprefs = applyprefs(cells, userprefs)
 	# write ToulBar cp output
 	with open("theoutfile.txt", "w") as outfile:
-		writealladjclause(cells, flowertypes, cellwidths, outfile)
+		writealladjclause(cells, flowertypes, cellwidths, outprefs, outfile)
 	# Write list of all variables with domain size=1 (which ToulBar omits) for result display
 	with open("removedvars.txt", "w") as outfile:
 		writeremovedvars(cells, outfile)

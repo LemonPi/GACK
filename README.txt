@@ -23,6 +23,44 @@ Currently there's no way to specify user preferences - the two protytypes have a
 
 To visualize the results, paste the result into the source of draw_results.html, and click "Spring", "Summer", or "Fall" to visualize the colours of the garden in each respective season.
 
+### User configuration (Prototype2 only)
+
+The configuration file takes the following format:
+
+```
+key space separated values
+```
+
+Mandatory keys:
+
+- color_rank: order that the colours are chosen.
+
+Colours: 0 - red, 1 - orange, 2 - yellow, 3 - green, 4 - blue, 5 - violet
+
+e.g. to specify preference of violet, then blue, then orange, yellow, green, red:
+
+color_rank 5 4 1 2 3 0
+
+- season_rank: order of preference for colour diversity for each season.
+
+Seasons: spring, summer, fall
+
+e.g. to specify that highest colour diversity should be in summer, then fall, the spring:
+
+season_rank summer fall spring
+
+Optional keys:
+
+- cell_force_(index)_(season) (color1) (color2)..
+
+where index is the cell index (1-39), season is one of the seasons, and colour is one of the integers for color as specified above:
+
+Force a cell to have one of the specified colours during a season.
+
+For example, to force cell 3 to be red in summer:
+
+cell_force_3_summer 0
+
 ### Other experiments
 
 We developed our own weighted CSP solver; this is located in cspbase.py. Unfortunately the performance was not sufficient for this assignment, so Toulbar2 was used instead. More information can be found in our report.

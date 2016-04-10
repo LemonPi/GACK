@@ -8,7 +8,6 @@ colorBlue = 4
 colorViolet = 5
 
 colorsDom = [0, 1, 2, 3, 4, 5] # roygbv
-colorsDom.reverse()
 heightDom = [0, 1, 2, 3, 4]
 
 class Cell:

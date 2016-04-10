@@ -1,0 +1,6 @@
+# prefer colours in order: violet blue green yellow orange red
+color_rank 5 4 3 2 1 0
+# prefer max colour diversity in summer - next highest in fall
+season_rank summer fall spring
+# force cell 3 to be red in summer
+cell_force_3_summer 0
