@@ -551,7 +551,7 @@ class BT:
 
 ######################### SOFT CSP classes and routines
 class SoftConstraint: 
-    def __init__(self, name, scope, cost, mc): 
+    def __init__(self, name, scope, cost, mc=0): 
         '''Maps possible value combinations of the constrained variables to a cost
         cost = 0 if fully satisfied, else a positive number 
         requires a cost(scope) function
@@ -764,6 +764,7 @@ class BB:
                 elif max_cost < md:
                     md = max_cost
                     mv = v
+            print('selecting {} with max cost {}'.format(mv,md))
 
         self.unasgn_vars.remove(mv)
         return mv

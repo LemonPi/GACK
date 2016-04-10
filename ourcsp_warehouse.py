@@ -28,7 +28,7 @@ def main():
 	]
 	# warehouse open state
 	warehouses = [Variable("warehouse" + str(i), [0, 1]) for i in range(numWarehouse)]
-	warehouseOpeningCosts = [SoftConstraint("openingcost" + str(i), [warehouses[i]], lambda a: 0 if a == 0 else openCost) for i in range(numWarehouse)]
+	warehouseOpeningCosts = [SoftConstraint("openingcost" + str(i), [warehouses[i]], lambda a: 0 if a == 0 else openCost, mc=openCost) for i in range(numWarehouse)]
 
 	stores = [Variable("store" + str(i), [0, 1, 2, 3, 4]) for i in range(numStore)]
 	storeChanneling = [None] * numStore * numWarehouse;
@@ -39,7 +39,7 @@ def main():
 			constraint.add_satisfying_tuples(sat_implies_2(stores[store], warehouse, warehouses[warehouse], 1))
 			storeChanneling[i] = constraint;
 			i += 1
-	storeTransportation = [SoftConstraint("trans" + str(store), [stores[store]], lambda a, store=store: costs[store][a]) for store in range(numStore)]
+	storeTransportation = [SoftConstraint("trans" + str(store), [stores[store]], lambda a, store=store: costs[store][a], mc=max(costs[store])) for store in range(numStore)]
 
 	csp = SCSP("warehouse", warehouses + stores)
 	for constraint in storeChanneling:

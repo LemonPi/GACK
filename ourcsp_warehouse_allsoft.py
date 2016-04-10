@@ -48,8 +48,9 @@ def main():
 	for constraint in storeTransportation:
 		csp.add_soft_constraint(constraint)
 
-	bb = BB(csp)
-	bb.trace_on()
+    # upper bound of 500
+	bb = BB(csp, UB=500)
+	#bb.trace_on()
 	bb.bb_search(prop_GAC)
 	
 main()
