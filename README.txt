@@ -47,6 +47,7 @@ To visualize the results, paste the result into the source of draw_results.html,
 ### User configuration (Prototype2 only)
 
 The configuration file, prototype2/user_prefs.txt, has the following format:
+Edit the file to change the preferences.
 
 ```
 key space separated values
@@ -81,6 +82,10 @@ Force a cell to have one of the specified colours during a season.
 For example, to force cell 3 to be red in summer:
 
 cell_force_3_summer 0
+
+You can also have disjunctive constraints - forcing cell 3 to be red or blue in spring:
+
+cell_force_3_spring 0 4
 
 - colorclash (weight) (color1) (color2)
 
@@ -119,6 +124,10 @@ To run the equivalent test using Toulbar2:
 To run ourcsp_warehouse_allsoft.py:
 
 `python3 ourcsp_warehouse_allsoft.py`
+
+To better exercise the heuristics, run ourcsp_warehouse_varyingsoft.py:
+
+`python3 ourcsp_warehouse_varyingsoft.py`
 
 To run the equivalent test using Toulbar2:
 

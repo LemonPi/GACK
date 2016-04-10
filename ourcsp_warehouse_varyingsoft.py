@@ -52,7 +52,7 @@ def main():
 		csp.add_soft_constraint(constraint)
 
 	bb = BB(csp)
-	bb.trace_on()
+#	bb.trace_on()
 	bb.bb_search(prop_GAC)
 	
 main()

@@ -257,6 +257,13 @@ class Constraint:
            variables in the constraints scope'''
         return tuple(vals) in self.sat_tuples
 
+    def check_asgn(self):
+        '''check using assigned values of its variables'''
+        if self.get_n_unasgn() != 0:
+            print("checking consistency of ", c, " when not all scope variables are assigned")
+        vals = tuple(v.get_assigned_value() for v in self.scope)
+        return vals in self.sat_tuples
+
     def get_n_unasgn(self):
         '''return the number of unassigned variables in the constraint's scope'''
         n = 0
@@ -741,6 +748,8 @@ class BB:
 
         md = -1
         mv = None
+
+        # using just MRV, shortcircuit so the modification afterwards doesn't run
         for v in self.unasgn_vars:
             # if it's a hard constraint
             if self.csp.get_cons_with_var(v):
@@ -761,10 +770,9 @@ class BB:
                 if md < 0:
                     md = max_cost
                     mv = v
-                elif max_cost < md:
+                elif max_cost > md:
                     md = max_cost
                     mv = v
-            print('selecting {} with max cost {}'.format(mv,md))
 
         self.unasgn_vars.remove(mv)
         return mv
@@ -912,15 +920,24 @@ class BB:
         '''find and return the best order to explore the values of a variable.
         order by cheapest cost first'''
         vals = var.cur_domain()
-        scons = self.csp.get_scons_with_var(var)
+        cons = self.csp.get_cons_with_var(var)
+        method = 'minconflict'
+        # if belongs to hard constraint, use minconflict, else mincost
+        if not cons:
+            method = 'mincost'
+            cons = self.csp.get_scons_with_var(var)
+
         # see how assignment to each value would change cost
         cost_change = dict()
         for val in vals:
             cost = 0
             var.assign(val)
-            for c in scons:
+            for c in cons:
                 if c.get_n_unasgn() == 0: # fully assigned constraints
-                    cost += c.get_cost()
+                    if method == 'mincost':
+                        cost += c.get_cost()
+                    else:
+                        cost += c.check_asgn()
 
             cost_change[val] = cost
             var.unassign()
