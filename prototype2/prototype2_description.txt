@@ -1,0 +1,5 @@
+- In prototype 1 colour variation enforced by 6-ary constraint (spring colour different from neighbour spring color OR summer different from neighbour summer OR fall different from neighbour fall)
+- Replace with three binary constraints of equal weight
+- Expect that in worst case 1/3 can be satisfied like before
+- Performance bad: solver tries to satisfy all of them; not possible
+- Need to put minimum value (117 was minimum seen after running solver for a long time) to let it terminate on reasonable solution
