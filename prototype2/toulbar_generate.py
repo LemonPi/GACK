@@ -36,8 +36,8 @@ def writealladjclause(cells, flowertypes, cellwidths, outfile):
 			#	cell.index, adj.index), file=outfile)
 			#print("soft(1, (cell{}_color_spring != 3) != (cell{}_color_spring != 3))".format(cell.index, adj.index), file=outfile);
 			print("soft(1, (cell{}_color_spring != cell{}_color_spring))".format(cell.index, adj.index), file=outfile)
-			print("soft(1, (cell{}_color_summer != cell{}_color_summer))".format(cell.index, adj.index), file=outfile)
-			print("soft(1, (cell{}_color_fall != cell{}_color_fall))".format(cell.index, adj.index), file=outfile)
+			print("soft(3, (cell{}_color_summer != cell{}_color_summer))".format(cell.index, adj.index), file=outfile)
+			print("soft(2, (cell{}_color_fall != cell{}_color_fall))".format(cell.index, adj.index), file=outfile)
 
 def readflowertypes():
 	flowers = []

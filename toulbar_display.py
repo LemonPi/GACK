@@ -25,15 +25,15 @@ with open(sys.argv[1], "r") as infile:
 	for l in infile:
 		if foundit:
 			parts = l.strip().split(" ")
-			i = 0
-			for vari in range(len(varnames)):
-				varname = varnames[vari]
-				if varname in removedvars:
-					print(varname, removedvars[varname])
-				else:
-					print(varname, vardoms[vari][int(parts[i])])
-					i += 1
-			break
+			foundit = False
 		else:
 			if "New solution" in l:
 				foundit = True
+i = 0
+for vari in range(len(varnames)):
+	varname = varnames[vari]
+	if varname in removedvars:
+		print(varname, removedvars[varname])
+	else:
+		print(varname, vardoms[vari][int(parts[i])])
+		i += 1
