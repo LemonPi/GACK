@@ -55,7 +55,17 @@ function cellColorsForSeason(vars, season) {
 	var outColors = new Array(cellCount);
 	for (var i = 0; i < cellCount; i++) {
 		var thecolor = vars["cell" + (i + 1) + "_color_" + season];
-		outColors[i] = plantColorMap[thecolor];
+		if (thecolor == 3) {
+			var height = vars["cell" + (i + 1) + "_height"];
+			var heightMult = ((4-height) / 4)*0.40 + 0.60;
+			var thecolor = plantColorMap[thecolor];
+			var r = Math.min(0xff, (((thecolor >> 16) & 0xff) * heightMult)|0);
+			var g = Math.min(0xff, (((thecolor >> 8) & 0xff) * heightMult)|0);
+			var b = Math.min(0xff, (((thecolor) & 0xff) * heightMult)|0);
+			outColors[i] = r << 16 | g << 8 | b;
+		} else {
+			outColors[i] = plantColorMap[thecolor];
+		}
 	}
 	return outColors;
 }
