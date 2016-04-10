@@ -4,11 +4,17 @@
 
 These are the constraints implemented in Prototype2.
 
+Always active:
+
 - Colour variety constrant: adjacent cells should have different colour
 - Moisture constraint: adjacent cells should have similar moisture requirements
 - Height constrant: cells closer to the edge should be shorter than neighbours further from the edge
 - Traffic: do not choose plants that can only handle low traffic for border cells
 - Spread: do not choose plants that requires more room than the cell can provide
+- Availability: cell properties must match at least one plant from the perennial.com database of perennials
+
+User-configurable:
+
 - User-configurable priority for seasons (which season should have more colour variation)
 - User-configurable priority for colour choices (which colours are picked first in the solution)
 - User can choose to force a cell to a certain colour/certain colours
