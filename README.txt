@@ -1,5 +1,20 @@
 ## GaCK: Garden Creation Kit
 
+### Supported constraints
+
+These are the constraints implemented in Prototype2.
+
+- Colour variety constrant: adjacent cells should have different colour
+- Moisture constraint: adjacent cells should have similar moisture requirements
+- Height constrant: cells closer to the edge should be shorter than neighbours further from the edge
+- Traffic: do not choose plants that can only handle low traffic for border cells
+- Spread: do not choose plants that requires more room than the cell can provide
+- User-configurable priority for seasons (which season should have more colour variation)
+- User-configurable priority for colour choices (which colours are picked first in the solution)
+- User can choose to force a cell to a certain colour/certain colours
+- User can specify to avoid two colours from being placed next to each other
+- User can specify a preference to have two colours adjacent to each other
+
 ### Setup
 
 Toulbar2 is required to run this program. Run
@@ -10,7 +25,7 @@ to download and install Toulbar2 in the current directory.
 
 ### Running GaCK
 
-There are two versions of the program: Prototype1 (older) and Prototype2 (newer). To use:
+There are two versions of the program: Prototype1 (older and simpler version, used as baseline to compare the newer Prototype2 against) and Prototype2 (latest version). To use:
 
 ```
 cd prototype1
@@ -19,13 +34,13 @@ cd prototype1
 
 replace prototype1 with prototype2 to run prototype2.
 
-Currently there's no way to specify user preferences - the two protytypes have a hardcoded preference for the 3 cell to bloom red in summer to simulate a user preference.
+Prototype2 can be configured with the prototype2/user_prefs.txt file (documented in the next section). Prototype1 is not configurable and has a hardcoded constraint for cell 3 to be red in summer.
 
 To visualize the results, paste the result into the source of draw_results.html, and click "Spring", "Summer", or "Fall" to visualize the colours of the garden in each respective season.
 
 ### User configuration (Prototype2 only)
 
-The configuration file takes the following format:
+The configuration file, prototype2/user_prefs.txt, has the following format:
 
 ```
 key space separated values
