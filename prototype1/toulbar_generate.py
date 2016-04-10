@@ -1,3 +1,5 @@
+import sys
+sys.path.append("..")
 from cell import *
 def writealladjclause(cells, flowertypes, outfile):
 	print("Gack", file=outfile)
@@ -35,7 +37,7 @@ def writealladjclause(cells, flowertypes, outfile):
 
 def readflowertypes():
 	flowers = []
-	with open("flowertypes.csv", "r") as infile:
+	with open("../flowertypes.csv", "r") as infile:
 		a = True
 		for l in infile:
 			if a:

@@ -1,3 +1,4 @@
+import os
 from cspbase import Variable
 colorRed = 0
 colorOrange = 1
@@ -68,12 +69,12 @@ def flood(startcell, dist):
 
 def buildcells():
 	cells = [Cell(0, 0, 0, -1)]
-	with open("cell_areas.txt", "r") as infile:
+	with open(os.path.join(os.path.dirname(__file__), "cell_areas.txt"), "r") as infile:
 		indata = [int(b) for b in infile.read().strip().split(",")]
 		for cellarea in indata:
 			# we do not account for natural shading yet
 			cells.append(Cell(len(cells), cellarea, 0, 9999)) 
-	with open("adjacent.csv", "r") as infile:
+	with open(os.path.join(os.path.dirname(__file__), "adjacent.csv"), "r") as infile:
 		for l in infile:
 			a = [int(b) for b in l.strip().split(",")]
 			cell = cells[a[0]]

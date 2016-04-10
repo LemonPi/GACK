@@ -2,7 +2,10 @@ import sys
 varnames = []
 vardoms = []
 removedvars = {}
-with open("theoutfile.txt", "r") as infile:
+if len(sys.argv) != 4:
+	print("Usage: python3 toulbar_display.py <toulbar_output> <cp_input> <removedvars>")
+	exit(1)
+with open(sys.argv[2], "r") as infile:
 	firstline = True
 	for l in infile:
 		if firstline:
@@ -13,7 +16,7 @@ with open("theoutfile.txt", "r") as infile:
 		varline = l.strip().split(" ")
 		varnames.append(varline[0])
 		vardoms.append(varline[1:])
-with open("removedvars.txt", "r") as infile:
+with open(sys.argv[3], "r") as infile:
 	for l in infile:
 		thevalues = l.strip().split(" ")
 		removedvars[thevalues[0]] = thevalues[1]
