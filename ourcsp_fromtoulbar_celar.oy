@@ -33,7 +33,7 @@ with open(sys.argv[1], "r") as infile:
 				middle = l[l.find("abs(") + 4:l.find(") >")]
 				middlevars = [a.strip() for a in middle.split(" - ")]
 				print("csp.add_soft_constraint(SoftConstraint('', [", ",".join(middlevars), "], lambda a, b: 0 if abs(a - b) > ",
-					l[l.find(") > ") + len(") > "):l.rfind(")")], " else ", l[len("soft("):l.find(",")], "))")
+					l[l.find(") > ") + len(") > "):l.rfind(")")], " else ", l[len("soft("):l.find(",")], ",mc=", l[len("soft("):l.find(",")], "))")
 			else:
 				me = [a.strip() for a in l.split()]
 				print(me[0], "= Variable('" + me[0] + "', [", ",".join(me[1:]), "])")
