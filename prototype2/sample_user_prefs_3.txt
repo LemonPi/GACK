@@ -1,0 +1,4 @@
+# prefer colours in order: violet blue green yellow orange red
+color_rank 0 1 2 3 4 5
+# prefer max colour diversity in summer - next highest in fall
+season_rank summer spring fall
