@@ -1,5 +1,8 @@
 ## GaCK: Garden Creation Kit
 
+![example solution](screenshots/sample_2/sample_screenshot_no-red-yellow_fall_spring.png)
+
+
 ### Supported constraints
 
 These are the constraints implemented in Prototype2.
