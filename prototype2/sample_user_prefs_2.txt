@@ -1,0 +1,6 @@
+# prefer colours in roygbv order
+color_rank 0 1 2 3 4 5
+# prefer max colour diversity in fall - next highest in spring
+season_rank fall spring summer
+# no red and yellow next to each other; weight is 3
+colorclash 3 0 2

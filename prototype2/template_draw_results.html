@@ -109,8 +109,8 @@ function drawForSeason(season) {
 }
 
 function clickHandler(e) {
-	var x = (e.clientX - e.target.offsetLeft);
-	var y = (e.clientY - e.target.offsetTop);
+	var x = (e.pageX - e.target.offsetLeft);
+	var y = (e.pageY - e.target.offsetTop);
 	var a = (y*pixels.width + x) * 4;
 	var myint = pixelsData[a] << 16 | pixelsData[a+1] << 8 | pixelsData[a+2];
 	var pixindex = colors.indexOf(myint);

@@ -1,0 +1,10 @@
+# prefer colours in order: violet red blue yellow orange green
+color_rank 5 0 4 2 1 3
+# prefer max colour diversity in spring - next highest in fall
+season_rank spring summer fall
+# force cell 35 to be orange in spring
+cell_force_35_summer 1
+# no red and blue next to each other; weight is 5
+colorclash 5 0 4
+# try to have orange and yellow next to each other; weight is 3
+coloradj 3 1 2
