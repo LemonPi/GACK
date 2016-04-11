@@ -330,4 +330,5 @@ csp.add_soft_constraint(SoftConstraint('', [ x767,x785 ], lambda a, b: 0 if abs(
 csp.add_soft_constraint(SoftConstraint('', [ x767,x786 ], lambda a, b: 0 if abs(a - b) >  259  else   10 ,mc=  10 ))
 csp.add_soft_constraint(SoftConstraint('', [ x768,x785 ], lambda a, b: 0 if abs(a - b) >  259  else   10 ,mc=  10 ))
 bb = BB(csp, UB= 160 )
+#bb.trace_on()
 bb.bb_search(prop_GAC)
