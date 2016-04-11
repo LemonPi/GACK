@@ -1,14 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
+<title>GACK results</title>
+<style>
+body {
+	font-family: Helvetica, Arial, Roboto, sans-serif;
+}
+</style>
 <script id="results" type="text/plain">
 #include "solutionout.txt"
+</script>
+<script id="results-plants" type="text/plain">
+#include "plant_choices.txt"
 </script>
 <script>
 "use strict";
 var cellCount = 39;
 var drawId = 0;
 var ctx, canvas, bedpos, bedgraph, mainImg, pixels, pixelsData;
+var plantChoices, plantChoicesDiv, activeCellDiv;
 var colors = [0xffebee, 0xffcdd2, 0xef9a9a, 0xe57373,
 0xef5350, 0xf44336, 0xe53935, 0xd32f2f,
 0xc62828, 0xb71c1c, 0xfce4ec, 0xf8bbd0,
@@ -19,7 +30,7 @@ var colors = [0xffebee, 0xffcdd2, 0xef9a9a, 0xe57373,
 0x6a1b9a, 0x4a148c, 0xede7f6, 0xd1c4e9,
 0xb39ddb, 0x9575cd, 0x7e57c2, 0x673ab7,
 0x5e35b1, 0x512da8, 0x4527a0];
-var plantColorMap = [0xf44336, 0xff9800, 0xffeb3b, 0x8bc34a, 0x2196f3, 0x9c27b0];
+var plantColorMap = [0xef5350, 0xffcc80, 0xfff59d, 0xc5e1a5, 0x29b6f6, 0xb39ddb];
 var resultsSrc = "results";
 function drawResult(colorForCell) {
 	var d = pixelsData;
@@ -43,12 +54,22 @@ function loadhandler() {
 	mainImg = document.getElementById("mainimg");
 	canvas.width = mainImg.width;
 	canvas.height = mainImg.height;
+	canvas.onclick = clickHandler;
 	ctx = canvas.getContext("2d");
 	ctx.drawImage(mainImg, 0, 0);
-	pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+	try {
+		pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+	} catch (e) {
+		document.body.style.display = "none";
+		alert("Your browser prevents us from accessing the pixel data: please run\npython3 -m http.server\nin the top level GACK directory then browse to http://localhost:8000/prototype2/draw_results.html");
+		return;
+	}
 	var d = pixels.data;
 	pixelsData = new Uint8ClampedArray(d);
 	drawForSeason("spring");
+	loadPlantChoices();
+	plantChoicesDiv = document.getElementById("plantChoices");
+	activeCellDiv = document.getElementById("activeCellDiv");
 }
 
 function cellColorsForSeason(vars, season) {
@@ -86,12 +107,50 @@ function drawForSeason(season) {
 	var colors = cellColorsForSeason(vars, season);
 	drawResult(colors);
 }
+
+function clickHandler(e) {
+	var x = (e.clientX - e.target.offsetLeft);
+	var y = (e.clientY - e.target.offsetTop);
+	var a = (y*pixels.width + x) * 4;
+	var myint = pixelsData[a] << 16 | pixelsData[a+1] << 8 | pixelsData[a+2];
+	var pixindex = colors.indexOf(myint);
+	if (pixindex != -1) {
+		var plantChoice = plantChoices[pixindex];
+		activeCellDiv.innerHTML = "Cell " + (pixindex + 1);
+		plantChoicesDiv.innerHTML = plantChoice;
+	}
+}
+
+function loadPlantChoices() {
+	var plantsRaw = document.getElementById("results-plants").innerHTML.trim().split("\n");
+	plantChoices = new Array(plantsRaw.length);
+	for (var i = 0; i < plantChoices.length; i++) {
+		var raw = plantsRaw[i].substring(plantsRaw[i].indexOf(":")+1).split("|");
+		var partsAll = new Array(raw.length);
+		for (var j = 0; j < raw.length; j++) {
+			var parts = raw[j].split("@");
+			if (parts.length < 2) {
+				partsAll[j] = "";
+				continue;
+			}
+			var slug = parts[0].toLowerCase().replace(/[^0-9a-z ]/g, "").replace(/\s+/g, "-");
+			var outstr = "<a href=\"http://www.perennials.com/plants/" + slug + ".html\" target=\"_blank\">" + parts[0] + "(" + parts[1] + ")</a>";
+			partsAll[j] = outstr;
+		}
+		plantChoices[i] = partsAll.join("<br>");
+	}
+}
 window.onload = loadhandler;
 </script>
 </head>
 <body>
 <canvas id="maincanvas" width="1024" height="1024"></canvas>
 <img id="mainimg" src="../flowerbed_coloured.png" style="display: none">
+<div id="activeCellDiv" style="float: right">
+No cell selected. Click on a cell to see the plants suitable for that cell.
+</div>
+<div id="plantChoices" style="float: right">
+</div>
 <button onclick="drawForSeason('spring')">Spring</button>
 <button onclick="drawForSeason('summer')">Summer</button>
 <button onclick="drawForSeason('fall')">Fall</button>

@@ -99,14 +99,18 @@ def cleanup(plant):
 def planttotuple(plant):
 	return (plant["height"], plant["color"], plant["season"], plant["moisture"], plant["spread"], plant["traffic"])
 
-with open("../allplants.bin", "rb") as infile:
-	allplants = pickle.load(infile)
-newplants = [cleanup(plant) for plant in allplants]
-plantset = set()
-for plant in newplants:
-	plantset.add(planttotuple(plant))
-print("Height,Color,Season,Moisture,Spread,Traffic")
-for plant in plantset:
-	print(",".join(str(a) for a in plant))
-#with open("newplants.bin", "wb") as outfile:
-#	pickle.dump(newplants, outfile)
+def main():
+	with open("../allplants.bin", "rb") as infile:
+		allplants = pickle.load(infile)
+	newplants = [cleanup(plant) for plant in allplants]
+	plantset = set()
+	for plant in newplants:
+		plantset.add(planttotuple(plant))
+	print("Height,Color,Season,Moisture,Spread,Traffic")
+	for plant in plantset:
+		print(",".join(str(a) for a in plant))
+	#with open("newplants.bin", "wb") as outfile:
+	#	pickle.dump(newplants, outfile)
+
+if __name__ == "__main__":
+	main()
