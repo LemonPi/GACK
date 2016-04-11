@@ -45,19 +45,21 @@ used as baseline to compare the newer Prototype2 against) and Prototype2
 (latest version). To use:
 
 ```
-cd prototype1
+cd prototype2
 ./toulbar_run.sh
 ```
 
-replace prototype1 with prototype2 to run prototype2.
+replace prototype2 with prototype1 to run prototype1.
 
 Prototype2 can be configured with the prototype2/user_prefs.txt file 
 (documented in the next section). Prototype1 is not configurable and has a 
 hardcoded constraint for cell 3 to be red in summer.
 
-To visualize the results, paste the result into the source of 
-draw_results.html, and click "Spring", "Summer", or "Fall" to visualize the 
-colours of the garden in each respective season.
+This produces a list of variable assignments and possible plants for each
+cell, as well as an html page you can open to visualize the garden.
+Click "Spring", "Summer", or "Fall" to visualize the 
+colours of the garden in each respective season, and click on the cells
+themselves to bring up a list of candidate plants and their links.
 
 ### User configuration (Prototype2 only)
 
@@ -125,6 +127,12 @@ colorclash 5 0 4
 
 Opposite of colorclash: this is for colours that should be adjacent. Usage is 
 same as colorclash.
+
+### Example solutions
+
+Several gardens were produced with various user constraints, and can be
+found inside the screenshots/ folder.
+
 
 ### Other experiments
 
